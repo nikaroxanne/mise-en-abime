@@ -35,8 +35,8 @@
 	creative extensions of self-replicating code. 
 
 
-	The project is primarily inspired by Ken Thompson\'s 
-	1984 Turing Award Lecture 'Reflections on Trusting Trust' 
+	The project is primarily inspired by Ken Thompson's 
+	1984 Turing Award Lecture "Reflections on Trusting Trust"
 	and the essay 
 	"The Work of Art in the Age of Mechanical Reproduction" 
 	by Walter Benjamin, as well as myriad other creators, 
