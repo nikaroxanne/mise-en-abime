@@ -33,8 +33,9 @@ MBR_SIZE			equ 0x200
 SCALE_MULTIPLIER	equ 4
 ;******************************************************************************
 
-BUF equ $+200
-VXPaintBuffer equ $+400
+;BUF equ $+200
+;BUF equ 0x7E00
+VXPaintBuffer equ 0x7E00
 
 VX_BOOT:
 cli
@@ -58,10 +59,13 @@ sti
 ;	int 13h
 
 load_vx_paint:
-	mov ax, 0x20C	;read one sector of disk
-	mov	cx, 0xA
+	push cs
+	pop es
+	mov ax, 0x214	;read twenty sectors of disk
+	mov	cx, 0x0D	;cylinder 0, sector 13 (0xD)
 	mov dx, 0x80 	;from Side 0, drive C:
-	lea bx, VXPaintBuffer		;to buffer BUF in DS
+	mov bx, VXPaintBuffer
+;	lea bx, VXPaintBuffer		;to buffer BUF in DS
 	int 13h
 
 ;******************************************************************************
@@ -90,10 +94,23 @@ gen_rand_num:
 	mov es,ax
 	mov ax, es:[46Ch] ;offset of var for internal timer in BPB
 	mov [randtimer], al
+	mov [randshiftnum], ah
 	pop es
 	pop ax
+	cmp word [randtimer], 6
+	jge gen_rand_shifts
+	mov [randshift0], ax
 	jmp paint_setup
+	;jmp set_pal
 
+gen_rand_shifts:
+	push ax
+	mov ax, [randtimer]
+	add ax, [randshiftnum]
+	mov [randshift0], ax
+	pop ax
+	jmp paint_setup
+;;	randshift0 equ (randtimer+randshiftnum)
 
 set_pal:
 	salc				;set carry flag in al, if carry flag set, al=0
@@ -101,12 +118,15 @@ set_pal:
 	out	dx, al
 	inc	dx
 	pal_1:
+		;or ax, [randshift0]
 		or	ax,0000111100110011b
 		push	ax
 		shr	ax, 10
+		;shr	ax, randshift0
 		out	dx,al
 		mul	al
-		shr	ax, 6
+		;shl	ax, randshift1
+		shl	ax, 6
 		out 	dx,al
 		pop	ax
 		out	dx,al
@@ -125,6 +145,9 @@ paint_setup:
 		mbr_paint:
 			;lea si, MichelAngeBitmap
 			lea si, VXPaintBuffer
+			;push cs
+			;pop es
+			;mov si, 0x400
 			push si
 			mov bx, SCALED_SCREEN_MAX
 			vga_mbr_y:
@@ -135,6 +158,7 @@ paint_setup:
 					or al, es:[di]
 					;add al, 0x01
 					add al, [randtimer]
+					add al, [randshiftnum]
 					mov es:[di], al 
 					;mov es:[di+2], al 
 					inc si
@@ -221,6 +245,12 @@ greetz_len	equ $-greetz
 	
 randtimer:
 	db 0
+randshiftnum:
+	db 0
+randshift0:
+	db 0
+
+;randshift1 equ (randshift0 - 2)
 	
 VXend:
 	times 510-($-$$) db 0
