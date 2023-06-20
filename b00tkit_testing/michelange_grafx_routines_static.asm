@@ -2,12 +2,25 @@ bits 16
 ;.286			;masm specific
 ;.MODEL TINY		;masm specific
 
-;******************************************************************************
-;	COM Program that manipulates pixel values of command prompt 
-;	by writing directly to VGA buffer
+;;******************************************************************************
+;	This is the working demo of the malicious MBR/boot sector portion
+; 	of the Michelangelo REanimator bootkit
 ;	
-;	To be used in DOSBOX (or similar) MS-DOS Emulator program 
-;	Must be compiled with link16.exe (MASM32 preferably) 
+;	Use at your own risk. 
+;	*Plz dont dd your primary hd partition with this. 
+;	This is a "functional" boot sector that will hang once it hits the 
+;	last function
+;	It was written as a way to test the graphics functionality of my
+;	Michelangelo REanimator project
+;	There is no functionality in this boot sector to jump to a loaded
+; 	valid MBR, or to a valid boot sector
+;		
+;	To assemble (with nasm):
+;	nasm -f bin -o michelange_grafx_routines.mbr michelange_grafx_routines.mbr
+;	
+;	To run;
+;	qemu-system-i386 -hda michelange_grafx_routines.mbr
+;
 ;
 ;******************************************************************************
 
@@ -49,17 +62,6 @@ mov 	ss,ax
 mov		ax, 0x7C00
 mov		sp, ax
 sti
-;mov		sp, $-VX_BOOT
-;s_start	PROC	NEAR ; masm
-
-
-;Move to outside of the MBR itself, otherwise you're loading this same file in a loop.
-;copy_mbr:
-;	mov ax, 0x201	;read one sector of disk
-;	mov	cx, 1
-;	mov dx, 0x80 	;from Side 0, drive C:
-;	lea bx, BUF		;to buffer BUF in DS
-;	int 13h
 
 load_vx_paint:
 	mov ax, 0x0		;reset disk
@@ -102,7 +104,6 @@ vga_init:
 	int	10h
 	cld
 ;	jmp paint_setup
-;	jmp bmp_setup
 
 gen_rand_num:
 	push ax

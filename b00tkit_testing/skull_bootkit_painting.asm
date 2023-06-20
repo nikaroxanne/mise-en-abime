@@ -2,14 +2,24 @@ bits 16
 ;.286			;masm specific
 ;.MODEL TINY		;masm specific
 
-;******************************************************************************
-;	COM Program that manipulates pixel values of command prompt 
-;	by writing directly to VGA buffer
+;;;******************************************************************************
+;	This is the a working demo of a graphics payload for 
+; 	my Michelangelo REanimator bootkit
 ;	
-;	To be used in DOSBOX (or similar) MS-DOS Emulator program 
-;	Must be compiled with link16.exe (MASM32 preferably) 
+;	Use at your own risk. 
+;	*Plz run it in a VM and/or QEMU
+;	*Please also read the QEMU docs because I don't have time to 
+;	answer your q's bb, I'm sorry, I just rly don't </3
+		
+;	To assemble (with nasm):
+;	nasm -f bin -o michelange_grafx_routines.mbr michelange_grafx_routines.mbr
+;	
+;	To run;
+;	qemu-system-i386 -hda michelange_grafx_routines.mbr
+;
 ;
 ;******************************************************************************
+
 
 .CODE:
 	org 100h

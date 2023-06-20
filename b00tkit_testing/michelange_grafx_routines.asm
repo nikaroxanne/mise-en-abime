@@ -3,11 +3,24 @@ bits 16
 ;.MODEL TINY		;masm specific
 
 ;******************************************************************************
-;	COM Program that manipulates pixel values of command prompt 
-;	by writing directly to VGA buffer
+;	This is the working demo of the malicious MBR/boot sector portion
+; 	of the Michelangelo REanimator bootkit
 ;	
-;	To be used in DOSBOX (or similar) MS-DOS Emulator program 
-;	Must be compiled with link16.exe (MASM32 preferably) 
+;	Use at your own risk. 
+;	*Plz dont dd your primary hd partition with this. 
+;	This is a "functional" boot sector that will hang once it hits the 
+;	last function
+;	It was written as a way to test the graphics functionality of my
+;	Michelangelo REanimator project
+;	There is no functionality in this boot sector to jump to a loaded
+; 	valid MBR, or to a valid boot sector
+;		
+;	To assemble (with nasm):
+;	nasm -f bin -o michelange_grafx_routines.mbr michelange_grafx_routines.mbr
+;	
+;	To run;
+;	qemu-system-i386 -hda michelange_grafx_routines.mbr
+;
 ;
 ;******************************************************************************
 
